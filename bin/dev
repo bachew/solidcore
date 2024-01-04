@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if command -v python3 &> /dev/null; then
+    python_prog="$(which python3)"
+elif command -v python &> /dev/null; then
+    python_prog="$(which python)"
+else
+    echo 'python not found'
+    exit 1
+fi
+
+bin_dir="$(readlink -e "$(dirname "$BASH_SOURCE")")"
+repo_dir="$(dirname "$bin_dir")"
+"$python_prog" "$repo_dir/src-dev/bootstrap.py" "$@"

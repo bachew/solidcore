@@ -3,6 +3,7 @@ from dev import sh
 from os import path as osp
 from pathlib import Path
 import os
+import sys
 
 
 @define
@@ -30,3 +31,19 @@ class Development:
 
         for source_dir in self.source_dirs:
             sh.run(['mypy', '.'], cwd=str(source_dir))
+
+    def build(self):
+        with sh.chdir(self.base_dir):
+            sh.run(['rm', '-rf', 'build', 'dist'])
+            sh.run(['rm', '-rf', *list(Path().glob('**/*.egg-info'))])
+            sh.run([sys.executable, '-m', 'build', '--wheel'])
+
+    def upload(self):
+        with sh.chdir(self.base_dir):
+            dist_files = list(Path().glob('dist/*'))
+            sh.run(['twine', 'check', *dist_files])
+
+            for required_var in ['TWINE_USERNAME', 'TWINE_PASSWORD']:
+                sh.get_env_var(required_var)
+
+            sh.run(['twine', 'upload', '--verbose', '--non-interactive', *dist_files])

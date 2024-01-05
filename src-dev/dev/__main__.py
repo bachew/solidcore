@@ -61,7 +61,25 @@ def cli_lint(dev):
     try:
         dev.lint()
     except subprocess.CalledProcessError as exc:
-        raise SystemExit(exc.returncode)
+        raise SystemExit(1)
+
+
+@cli.command('build')
+@pass_obj
+def cli_build(dev):
+    '''
+    Build wheel.
+    '''
+    dev.build()
+
+
+@cli.command('upload')
+@pass_obj
+def cli_upload(dev):
+    '''
+    Upload wheel to pypi.
+    '''
+    dev.upload()
 
 
 cli(prog_name=cli.name)

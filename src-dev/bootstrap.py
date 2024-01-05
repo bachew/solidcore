@@ -27,10 +27,12 @@ class Venv:
             ['-U', 'pip'],
             ['-U', 'setuptools', 'wheel'],
             'attrs',
+            'build',
             'click',
             'structlog',
             'mypy',
             'pytest',
+            'twine',
         ]
 
     def __str__(self):
@@ -118,7 +120,7 @@ def panic(msg):
     raise SystemExit(1)
 
 
-def run(cmd, print_cmd=True, **kwargs):
+def run(cmd, *, print_cmd=True, **kwargs):
     kwargs.setdefault('check', True)
     cmd = [str(arg) for arg in cmd if cmd is not None]
 

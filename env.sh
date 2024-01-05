@@ -8,6 +8,6 @@
 #   env['DOCKER_CONFIG'] = str(base_dir / 'tmp/docker-config')
 #
 #
-# Then variables set in env.py will be available in development:
+# The variables set in env.py will be available in development, for example:
 #
 # $ bin/dev run python -c 'import os; print(os.environ["DOCKER_CONFIG"])'

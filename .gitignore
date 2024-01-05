@@ -1,6 +1,9 @@
+*.egg-info
 .mypy_cache
 .pytest_cache
 __pycache__
+/build
+/dist
 /env.py
 /tmp
 /venv

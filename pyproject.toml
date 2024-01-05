@@ -1,0 +1,21 @@
+[build-system]
+requires = ['setuptools', 'setuptools-scm', 'wheel']
+build-backend = 'setuptools.build_meta'
+
+[project]
+name = 'solidcore'
+version = '0.1.0'
+readme = 'README.md'
+requires-python = '>=3.9'
+authors = [
+    {name='Your Name', email='your.email@server'}
+]
+dependencies = [
+    'click',
+]
+
+[project.scripts]
+solidcore = 'solidcore.cli:cli'
+
+[tool.setuptools.packages.find]
+where = ['src']

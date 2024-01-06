@@ -8,7 +8,7 @@ version = '0.1.0'
 readme = 'README.md'
 requires-python = '>=3.9'
 authors = [
-    {name='Your Name', email='your.email@server'}
+    {name='Solid Core', email='solid@co.re'}
 ]
 dependencies = [
     'click',

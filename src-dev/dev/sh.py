@@ -24,13 +24,13 @@ def chdir(new_dir):
     old_dir = os.getcwd()
     log = structlog.get_logger()
 
-    log.info(f'chdir: {str(new_dir)}', cwd=str(new_dir))
+    log.info(f'chdir: {str(new_dir)}', dir=str(new_dir))
     os.chdir(new_dir)
 
     try:
         yield
     finally:
-        log.info(f'chdir: {str(old_dir)}', cwd=str(old_dir))
+        log.info(f'chdir: {str(old_dir)}', dir=str(old_dir))
         os.chdir(old_dir)
 
 

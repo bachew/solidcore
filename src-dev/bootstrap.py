@@ -7,19 +7,23 @@ import platform
 import runpy
 import subprocess
 import sys
+import os
 
 
 class Venv:
     __slots__ = (
+        'base_dir',
         'venv_dir',
         'bin_dir',
         'python',
         'venv_version',
         'pip_install_com_opts',
-        'pip_installs')
+        'pip_installs',
+        'pyproject_mtime')
 
-    def __init__(self, venv_dir):
-        self.venv_dir = venv_dir
+    def __init__(self, base_dir):
+        self.base_dir = Path(base_dir)
+        self.venv_dir = base_dir / 'venv'
         self.bin_dir = self._get_bin_dir()
         self.python = self.bin_dir / 'python'
 
@@ -41,6 +45,13 @@ class Venv:
             'structlog',
             'twine',
         ]
+
+        self.pyproject_mtime = 0
+        pyproject_toml = base_dir / 'pyproject.toml'
+
+        if pyproject_toml.exists():
+            self.pip_installs.append(['-e', base_dir])
+            self.pyproject_mtime = os.stat(pyproject_toml).st_mtime
 
     def _get_bin_dir(self):
         plat = platform.system()
@@ -98,15 +109,11 @@ def main():
     if env_file.is_file():
         runpy.run_path(env_file)
 
-    venv_dir = base_dir / 'venv'
-    venv = Venv(venv_dir)
-
-    if (base_dir / 'pyproject.toml').exists():
-        venv.pip_installs.append(['-e', base_dir])
+    venv = Venv(base_dir)
 
     if not venv.is_up_to_date():
         if venv.is_active():
-            panic(f'please exit outdated {str(venv_dir)!r}')
+            panic(f'please exit outdated {str(venv.venv_dir)!r}')
 
         print(f'{venv} is outdated, updating...')
         venv.update()

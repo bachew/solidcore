@@ -113,7 +113,7 @@ def main():
 
     if not venv.is_up_to_date():
         if venv.is_active():
-            panic(f'please exit outdated {str(venv.venv_dir)!r}')
+            panic(f'please exit outdated {venv}')
 
         print(f'{venv} is outdated, updating...')
         venv.update()

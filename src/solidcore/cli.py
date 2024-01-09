@@ -1,6 +1,17 @@
+from click import group
 import click
+import solidcore
 
 
-@click.command('solidcore')
+@group(context_settings={
+    'show_default': True,
+    'help_option_names': ['--help', '-h'],
+})
+@click.version_option(solidcore.__version__)
 def cli():
+    pass
+
+
+@cli.command('hi')
+def cli_hi():
     print('Hi!')

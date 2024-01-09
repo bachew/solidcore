@@ -2,6 +2,7 @@ from attrs import define, field
 from dev import sh
 from os import path as osp
 from pathlib import Path
+from glob import glob
 import os
 import sys
 
@@ -34,8 +35,8 @@ class Development:
 
     def build(self):
         with sh.chdir(self.base_dir):
-            sh.run(['rm', '-rf', 'build', 'dist'])
-            sh.run(['rm', '-rf', *list(Path().glob('**/*.egg-info'))])
+            sh.remove(['build', 'dist'])
+            sh.remove(list(glob('**/*.egg-info')))
             sh.run([sys.executable, '-m', 'build', '--wheel'])
 
     def upload(self):

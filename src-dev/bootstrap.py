@@ -3,6 +3,7 @@ from os import environ as env
 from pathlib import Path
 from venv import EnvBuilder
 import pickle
+import platform
 import runpy
 import subprocess
 import sys
@@ -11,13 +12,18 @@ import sys
 class Venv:
     __slots__ = (
         'venv_dir',
-        'version',
+        'bin_dir',
+        'python',
+        'venv_version',
         'pip_install_com_opts',
         'pip_installs')
 
     def __init__(self, venv_dir):
         self.venv_dir = venv_dir
-        self.version = 1  # increase if pip_installs haven't changed but venv needs to be updated
+        self.bin_dir = self._get_bin_dir()
+        self.python = self.bin_dir / 'python'
+
+        self.venv_version = 1  # increase if pip_installs haven't changed but venv needs to be updated
         self.pip_install_com_opts = [
             # Insert common pip install options here, e.g. --index-url
         ]
@@ -29,11 +35,20 @@ class Venv:
             'attrs',
             'build',
             'click',
-            'structlog',
+            'flake8',
             'mypy',
             'pytest',
+            'structlog',
             'twine',
         ]
+
+    def _get_bin_dir(self):
+        plat = platform.system()
+
+        if plat == 'Windows':
+            return self.venv_dir / 'Scripts'
+
+        return self.venv_dir / 'bin'
 
     def __str__(self):
         return f'virtual environment {str(self.venv_dir)!r}'
@@ -64,14 +79,14 @@ class Venv:
         venv_dir = self.venv_dir
         builder = EnvBuilder(clear=venv_dir.exists(), with_pip=True)
         builder.create(venv_dir)
-        pip = venv_dir / 'bin' / 'pip'
+        pip = [self.python, '-m', 'pip']
         common_opts = self.pip_install_com_opts
 
         for args in self.pip_installs:
             if isinstance(args, str):
                 args = [args]
 
-            run([pip, 'install', *common_opts, *args])
+            run([*pip, 'install', *common_opts, *args])
 
         self.updated_spec_file.write_bytes(pickle.dumps(self.spec))
 
@@ -91,7 +106,7 @@ def main():
 
     if not venv.is_up_to_date():
         if venv.is_active():
-            panic(f'please exit outdated {venv}')
+            panic(f'please exit outdated {str(venv_dir)!r}')
 
         print(f'{venv} is outdated, updating...')
         venv.update()
@@ -99,7 +114,7 @@ def main():
 
     env['PATH'] = osp.pathsep.join([
         str(base_dir / 'bin'),
-        str(venv_dir / 'bin'),
+        str(venv.bin_dir),
         env.get('PATH') or ''])
     env['PYTHONPATH'] = osp.pathsep.join([
         str(base_dir / 'src-dev'),
@@ -109,14 +124,13 @@ def main():
     ])
     env['PYTHONUTF8'] = '1'
 
-    python = venv_dir / 'bin' / 'python'
     args = sys.argv[1:]
-    res = run([python, '-m', 'dev', *args], check=False, print_cmd=False)
+    res = run([venv.python, '-m', 'dev', *args], check=False, print_cmd=False)
     raise SystemExit(res.returncode)
 
 
 def panic(msg):
-    print(msg, file=sys.stderr)
+    print(f'error: {msg}', file=sys.stderr)
     raise SystemExit(1)
 
 
@@ -128,7 +142,10 @@ def run(cmd, *, print_cmd=True, **kwargs):
         cmdline = subprocess.list2cmdline(cmd)
         print(f'bootstrap.run: {cmdline}')
 
-    return subprocess.run(cmd, **kwargs)
+    try:
+        return subprocess.run(cmd, **kwargs)
+    except FileNotFoundError:
+        panic(f'program not found: {cmd[0]}')
 
 
 main()

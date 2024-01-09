@@ -60,7 +60,7 @@ def cli_lint(dev):
     '''
     try:
         dev.lint()
-    except subprocess.CalledProcessError as exc:
+    except subprocess.CalledProcessError:
         raise SystemExit(1)
 
 

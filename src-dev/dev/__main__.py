@@ -1,12 +1,12 @@
 from click import argument, group, option, pass_context, pass_obj
-from dev import Development, logconf  # TODO: create solidcore, move logconf there
+from dev import Development, logconf
 import click
 import subprocess
 
 
 @group('dev', context_settings={
     'show_default': True,
-    'help_option_names': ['--help', '-h'],
+    'help_option_names': ['-h', '--help'],
 })
 @pass_context
 @option('--json', is_flag=True, help='Output log events in json')

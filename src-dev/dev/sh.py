@@ -58,7 +58,7 @@ def remove(path_or_paths, *, ignore_not_found=True):
             os.remove(path)
 
 
-def get_env_var(name: str) -> str:
+def env_var(name: str) -> str:
     value = os.environ.get(name)
 
     if not value:

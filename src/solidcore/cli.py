@@ -5,7 +5,7 @@ import solidcore
 
 @group(context_settings={
     'show_default': True,
-    'help_option_names': ['--help', '-h'],
+    'help_option_names': ['-h', '--help'],
 })
 @click.version_option(solidcore.__version__)
 def cli():

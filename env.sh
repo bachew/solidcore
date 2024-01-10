@@ -1,4 +1,4 @@
-# env.sh is not executed during bootstrapping, please create env.py instead, for example:
+# env.sh is not executed during bootstrapping, please create env.py instead, for example with:
 #
 # from os import environ as env
 # from pathlib import Path

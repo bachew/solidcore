@@ -45,6 +45,6 @@ class Development:
             sh.run(['twine', 'check', *dist_files])
 
             for required_var in ['TWINE_USERNAME', 'TWINE_PASSWORD']:
-                sh.get_env_var(required_var)
+                sh.env_var(required_var)
 
             sh.run(['twine', 'upload', '--verbose', '--non-interactive', *dist_files])

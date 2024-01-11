@@ -7,6 +7,9 @@ import os
 import sys
 
 
+ENVVAR_INCL_MANUAL_TESTS = 'DEV_INCLUDE_MANUAL_TESTS'
+
+
 @define
 class Development:
     base_dir: Path = field()
@@ -32,6 +35,21 @@ class Development:
 
         for source_dir in self.source_dirs:
             sh.run(['mypy', '.'], cwd=str(source_dir))
+
+    def test(self, pytest_args=None, *, manual=False):
+        if pytest_args is None:
+            pytest_args = []
+        else:
+            pytest_args = list(pytest_args)
+
+        if manual:
+            os.environ[ENVVAR_INCL_MANUAL_TESTS] = '1'
+            pytest_args += ['--capture', 'no']
+        else:
+            os.environ.pop(ENVVAR_INCL_MANUAL_TESTS, None)
+
+        with sh.chdir(self.base_dir):
+            sh.run(['pytest', *pytest_args])
 
     def build(self):
         with sh.chdir(self.base_dir):

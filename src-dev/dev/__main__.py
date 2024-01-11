@@ -64,6 +64,37 @@ def cli_lint(dev):
         raise SystemExit(1)
 
 
+@cli.command('test', context_settings={
+    'ignore_unknown_options': True,
+})
+@pass_obj
+@option('--manual', is_flag=True, help='Include manual tests')
+@argument('pytest_args', nargs=-1, type=click.UNPROCESSED)
+def cli_test(dev, manual, pytest_args):
+    '''
+    Run tests. For example:
+
+    \b
+      dev test -v
+
+    To run a test case without capturing output:
+
+    \b
+      dev test --capture no tests/test_example.py::test_temp_file
+
+    Run 'pytest --help' to see available pytest options like -v and --capture.
+
+    To run a manual test case:
+
+    \b
+      dev test --manual tests/test_example.py::test_user_input
+    '''
+    try:
+        dev.test(pytest_args, manual=manual)
+    except subprocess.CalledProcessError:
+        raise SystemExit(1)
+
+
 @cli.command('build')
 @pass_obj
 def cli_build(dev):
@@ -77,7 +108,15 @@ def cli_build(dev):
 @pass_obj
 def cli_upload(dev):
     '''
-    Upload wheel to pypi.
+    Upload wheel to PyPI.
+
+    To specify credentials, set these environment variables:
+
+    \b
+      TWINE_USERNAME
+      TWINE_PASSWORD
+
+    To upload to alternate PyPI, set TWINE_REPOSITORY_URL.
     '''
     dev.upload()
 

@@ -1,4 +1,4 @@
-from solidcore.cli import cli
+from .cli import cli
 
 
 cli(prog_name=cli.name)

@@ -16,11 +16,7 @@ def run(cmd: Sequence[Any], **kwargs: Any) -> subprocess.CompletedProcess:
     cmdline = shlex.join(cmd)
     log = structlog.get_logger()
     log.info(f'run: {cmdline}', cmd=cmd, **kwargs)
-
-    try:
-        return subprocess.run(cmd, **kwargs)
-    except FileNotFoundError:
-        raise FileNotFoundError(f'program not found: {cmd[0]}')
+    return subprocess.run(cmd, **kwargs)
 
 
 @contextmanager

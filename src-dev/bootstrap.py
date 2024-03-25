@@ -62,7 +62,7 @@ class Venv:
         return self.venv_dir / 'bin'
 
     def __str__(self):
-        return f'virtual environment {str(self.venv_dir)!r}'
+        return f'Virtual environment {str(self.venv_dir)!r}'
 
     def is_active(self):
         if not self.venv_dir.exists():
@@ -113,7 +113,7 @@ def main():
 
     if not venv.is_up_to_date():
         if venv.is_active():
-            panic(f'please exit outdated {venv}')
+            panic(f'{venv} is oudated, please exit and try again')
 
         print(f'{venv} is outdated, updating...')
         venv.update()
@@ -137,7 +137,7 @@ def main():
 
 
 def panic(msg):
-    print(f'error: {msg}', file=sys.stderr)
+    print(msg, file=sys.stderr)
     raise SystemExit(1)
 
 
@@ -149,10 +149,7 @@ def run(cmd, *, print_cmd=True, **kwargs):
         cmdline = subprocess.list2cmdline(cmd)
         print(f'bootstrap.run: {cmdline}')
 
-    try:
-        return subprocess.run(cmd, **kwargs)
-    except FileNotFoundError:
-        panic(f'program not found: {cmd[0]}')
+    return subprocess.run(cmd, **kwargs)
 
 
 main()

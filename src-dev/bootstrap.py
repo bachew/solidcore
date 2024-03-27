@@ -129,6 +129,7 @@ def main():
         # Add other source directories here
         env.get('PYTHONPATH') or '',
     ])
+    env['PYTHONUNBUFFERED'] = '1'
     env['PYTHONUTF8'] = '1'
 
     args = sys.argv[1:]

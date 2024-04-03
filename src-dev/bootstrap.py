@@ -1,6 +1,7 @@
 from os import path as osp
 from os import environ as env
 from pathlib import Path
+from textwrap import dedent
 from venv import EnvBuilder
 import pickle
 import platform
@@ -16,8 +17,7 @@ class Venv:
         'venv_dir',
         'bin_dir',
         'python',
-        'venv_version',
-        'pip_install_com_opts',
+        'pip_config',
         'pip_installs',
         'pyproject_mtime')
 
@@ -27,10 +27,9 @@ class Venv:
         self.bin_dir = self._get_bin_dir()
         self.python = self.bin_dir / 'python'
 
-        self.venv_version = 1  # increase if pip_installs haven't changed but venv needs to be updated
-        self.pip_install_com_opts = [
-            # Insert common pip install options here, e.g. --index-url
-        ]
+        # See https://pip.pypa.io/en/stable/topics/configuration/
+        self.pip_config = dedent('''\
+            ''')
 
         # Dev requirements
         self.pip_installs = [
@@ -90,14 +89,15 @@ class Venv:
         venv_dir = self.venv_dir
         builder = EnvBuilder(clear=venv_dir.exists(), with_pip=True)
         builder.create(venv_dir)
-        pip = [self.python, '-m', 'pip']
-        common_opts = self.pip_install_com_opts
+        pip_conf_file = venv_dir / 'pip.conf'
+        pip_conf_file.write_text(self.pip_config)
+        pip_prog = [self.python, '-m', 'pip']
 
         for args in self.pip_installs:
             if isinstance(args, str):
                 args = [args]
 
-            run([*pip, 'install', *common_opts, *args])
+            run([*pip_prog, 'install', *args])
 
         self.updated_spec_file.write_bytes(pickle.dumps(self.spec))
 

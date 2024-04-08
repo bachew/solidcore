@@ -27,6 +27,7 @@ class Development:
         base_dir = self.base_dir
         source_dirs = [p for p in paths if p.is_relative_to(base_dir)]
         # To add new source directory, please update src-dev/bootstrap.py
+        source_dirs.append(self.base_dir / 'tests')
         return source_dirs
 
     def lint(self):

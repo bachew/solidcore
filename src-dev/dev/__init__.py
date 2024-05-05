@@ -62,8 +62,11 @@ class Development:
         with sh.chdir(self.base_dir):
             dist_files = list(Path().glob('dist/*'))
             sh.run(['twine', 'check', *dist_files])
-
-            for required_var in ['TWINE_USERNAME', 'TWINE_PASSWORD']:
-                sh.env_var(required_var)
-
-            sh.run(['twine', 'upload', '--verbose', '--non-interactive', *dist_files])
+            sh.env_var('TWINE_PASSWORD')  # required
+            sh.run([
+                'twine', 'upload',
+                '--verbose',
+                '--non-interactive',
+                '-u', '__token__',
+                *dist_files,
+            ])

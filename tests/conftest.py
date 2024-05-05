@@ -1,4 +1,4 @@
-from dev import ENVVAR_INCL_MANUAL_TESTS, logconf
+from dev import ENV_MANUAL_TEST, logconf
 from pathlib import Path
 import os
 import pytest
@@ -13,7 +13,7 @@ def tmp_dir(tmpdir):
 
 
 def manual_test(func):
-    include = os.environ.get(ENVVAR_INCL_MANUAL_TESTS)
+    include = os.environ.get(ENV_MANUAL_TEST)
 
     if include:
         return func

@@ -7,7 +7,7 @@ import os
 import sys
 
 
-ENVVAR_INCL_MANUAL_TESTS = 'DEV_INCLUDE_MANUAL_TESTS'
+ENV_MANUAL_TEST = 'MANUAL_TEST'
 
 
 @define
@@ -44,10 +44,10 @@ class Development:
             pytest_args = list(pytest_args)
 
         if manual:
-            os.environ[ENVVAR_INCL_MANUAL_TESTS] = '1'
+            os.environ[ENV_MANUAL_TEST] = '1'
             pytest_args += ['--capture', 'no']
         else:
-            os.environ.pop(ENVVAR_INCL_MANUAL_TESTS, None)
+            os.environ.pop(ENV_MANUAL_TEST, None)
 
         with sh.chdir(self.base_dir):
             sh.run(['pytest', *pytest_args])

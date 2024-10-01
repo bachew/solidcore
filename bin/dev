@@ -9,6 +9,7 @@ else
     exit 1
 fi
 
-bin_dir="$(readlink -e "$(dirname "$BASH_SOURCE")")"
+script_dir="$(readlink -e "$BASH_SOURCE")"
+bin_dir="$(dirname "$script_dir")"
 repo_dir="$(dirname "$bin_dir")"
 "$python_prog" "$repo_dir/src-dev/bootstrap.py" "$@"

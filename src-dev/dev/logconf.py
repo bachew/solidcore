@@ -11,9 +11,6 @@ def init(json: bool = False):
         structlog.stdlib.PositionalArgumentsFormatter(),
         structlog.processors.TimeStamper(fmt='iso'),
         structlog.processors.StackInfoRenderer(),
-    ]
-
-    common_processors += [
         structlog.processors.UnicodeDecoder(),
     ]
 
@@ -38,8 +35,9 @@ def init(json: bool = False):
             structlog.processors.JSONRenderer(),
         ])
     else:
+        interactive = os.isatty(sys.stdout.fileno())
         formatter_processors.extend([
-            structlog.dev.ConsoleRenderer()
+            structlog.dev.ConsoleRenderer(colors=interactive)
         ])
 
     handler = logging.StreamHandler()
